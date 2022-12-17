@@ -1,6 +1,8 @@
 const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
+  // 关闭eslint语法
+  lintOnSave: false,
   // 给项目中的常用文件设置文件的路径别名，方便使用
   configureWebpack: {
     resolve: {

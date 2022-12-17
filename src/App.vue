@@ -18,5 +18,6 @@ export default {
 </script>
 
 <style>
-
+/* 导入整个项目中的基础样式设置 */
+@import 'assets/css/base.css'
 </style>

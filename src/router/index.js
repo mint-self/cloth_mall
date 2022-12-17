@@ -2,7 +2,7 @@ import Vue from 'vue'
 // 导入路由
 import VueRouter from 'vue-router'
 
-// 动态使用路由
+// 使用路由懒加载
 const Home = () => import('@/views/home/Home')
 const Category = () => import('@/views/category/Category')
 const Cart = () => import('@/views/cart/Cart')
