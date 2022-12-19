@@ -39,6 +39,9 @@ export default {
             // 就是将选中元素给取出来，将它的index来作为标识即可实现
             // 当前的索引就会变成点击的那个元素索引
             this.currentIndex = index;
+            // 点击之后将index传递给home组件，home组件去绑定这个时间tabClick
+            this.$emit('tabClick',index)
+            console.log(index);
         }
     }
 }
@@ -51,7 +54,8 @@ export default {
     font-size: 15px;
     height: 40px;
     line-height: 40px;
-    
+    background-color: #ffffff;
+    z-index: 9;
 }
 
 .tab-control-item {

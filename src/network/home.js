@@ -11,3 +11,14 @@ export function getHomeMultidata() {
         url: '/home/multidata'
     })
 }
+
+// 获取首页商品列表数据的请求: 这个请求需要分辨要请求哪种类型的商品，以及要请求获取第几页的商品，所以需要传递type, page这2个参数
+export function getHomeGoods(type, page) {
+    return request({
+        url: '/home/data',
+        params: {
+            type,
+            page
+        }
+    })
+}
