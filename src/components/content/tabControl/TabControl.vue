@@ -55,16 +55,16 @@ export default {
     height: 40px;
     line-height: 40px;
     background-color: #ffffff;
-    z-index: 9;
+    z-index: 1;
 }
 
 .tab-control-item {
     flex: 1;
 }
 
-.tab-control-item span {
-    padding: 5px;
-}
+/* .tab-control-item span {
+    
+} */
 
 /* 设置动态样式 */
 .active {
@@ -73,6 +73,7 @@ export default {
 /* 文字标题下方加下划线 */
 .active span {
     border-bottom: 3px solid var(--color-high-text);
+    padding: 5px;
 }
 
 </style>

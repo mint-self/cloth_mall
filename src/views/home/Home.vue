@@ -3,35 +3,53 @@
         <!-- 顶部导航栏 -->
         <nav-bar class="home-nav">
             <!-- 在组件中通过向插槽中插入具体的内容，这里只向中间插入了东西，左右没有做距离的设置 -->
-            <div slot="center">购物车</div>
+            <div slot="center">购物街</div>
         </nav-bar>
+        <!-- <tab-control 
+                class="tab-control" 
+                :titles="['流行', '新款', '精选']"
+                @tabClick="tabClick"
+            ></tab-control> -->
+        <!-- 以下组件都放在移动端滚动组件中 -->
+        <!-- probe-type="3"传递给Scroll组件，当值为3表示要监听滚动的位置；pull-up-load="true" 表示要监听上拉事件
+        -->
+        <scroll 
+            class="scroll-content" 
+            ref="scroll"
+            :probe-type="3"
+            :pull-up-load="true"
+            @scroll="contentScroll"
+            @pullingUp="loadMore"
+        >
+            <!--首页上方轮播图, 数据是在home这个父组件中获取的，然后通过数据传递传送给子组件-->
+            <home-swiper :banners="banners"></home-swiper>
 
-        <!--首页上方轮播图, 数据是在home这个父组件中获取的，然后通过数据传递传送给子组件-->
-        <home-swiper :banners="banners"></home-swiper>
+            <!-- 首页上方推荐列表 -->
+            <recommend-view :recommends="recommends"></recommend-view>
 
-        <!-- 首页上方推荐列表 -->
-        <recommend-view :recommends="recommends"></recommend-view>
+            <!-- 首页本周推荐栏 -->
+            <feature-view></feature-view>
 
-        <!-- 首页本周推荐栏 -->
-        <feature-view></feature-view>
+            <!-- 首页的控制栏 -->
+            <!-- 每个不同的页面，控制栏要显示的文字是不同的，所以直接由父元素将需要显示的文字传递过去 -->
+            <!-- @tabClick="tabClick"绑定子组件tabControl传递过来的事件，可以接收到index -->
+            <tab-control 
+                class="tab-control" 
+                :titles="['流行', '新款', '精选']"
+                @tabClick="tabClick"
+            />
 
-        <!-- 首页的控制栏 -->
-        <!-- 每个不同的页面，控制栏要显示的文字是不同的，所以直接由父元素将需要显示的文字传递过去 -->
-        <!-- @tabClick="tabClick"绑定子组件tabControl传递过来的事件，可以接收到index -->
-        <tab-control 
-            class="tab-control" 
-            :titles="['流行', '新款', '精选']"
-            @tabClick="tabClick"
-        ></tab-control>
+            <!-- 商品数据列表 -->
+            <!-- 将首页每个商品类型的数据传递过去 -->
+            <goods-list :goods="showGoods"></goods-list>
+        </scroll>
 
-        <!-- 商品数据列表 -->
-        <!-- 将首页每个商品类型的数据传递过去 -->
-        <goods-list :goods="showGoods"></goods-list>
-
-        <ul class="ulbox">
-            <li></li>
-            <li></li>
-        </ul>
+        <!-- 回到顶部的按钮 -->
+        <!-- 实现点击就回到页面的顶部，但是click事件不可以监听组件，需加上native表示实现原生属性才可以直接在组件上实现点击事件 -->
+        <back-top 
+            @click.native="backTopClick"
+            v-show="isShowBackTop"
+        />
     </div>
 </template>
 
@@ -40,6 +58,8 @@
 import NavBar from '@/components/common/navbar/NavBar'
 import TabControl from '@/components/content/tabControl/TabControl'
 import GoodsList from '@/components/content/goodsList/GoodsList.vue'
+import Scroll from '@/components/common/scroll/Scroll'
+import BackTop from '@/components/content/backTop/BackTop'
 
 // 导入首页中的子组件
 import HomeSwiper from './childComponents/HomeSwiper'
@@ -55,6 +75,8 @@ export default {
         NavBar,
         TabControl,
         GoodsList,
+        Scroll,
+        BackTop,
         HomeSwiper,
         RecommendView,
         FeatureView
@@ -84,7 +106,10 @@ export default {
             },
 
             // 当前选中的商品类型
-            currentType: 'pop'
+            currentType: 'pop',
+
+            // 是否显示backTop
+            isShowBackTop: false,
         }
     },
     computed: { 
@@ -98,6 +123,7 @@ export default {
         /**
          * 数据监听的方法
          */
+
         // 点击控制栏时，根据点击的
         tabClick (index) {
             // 判断是点击了哪个tab，如果是第一个类型就是'pop'，以此类推
@@ -114,9 +140,30 @@ export default {
             }
         },
 
+        // 实现点击backTop之后回到页面顶部
+        backTopClick () {
+            // 直接调用Scroll组件中定义好的回调顶部的方法scrollTo()
+            this.$refs.scroll.scrollTo(0, 0)
+        },
+
+        // 设置backTop的显示与隐藏
+        contentScroll (position) {
+            // 当位置超过1000时显示，否则隐藏
+            // 因为position.y的值是负数的，所以要先取它的相反数来计算
+            this.isShowBackTop = (-position.y) > 1000
+        },
+
+        // 实现上拉加载更多
+        loadMore () {
+            // 直接调用获取不同商品类型的数据的方法即可
+            this.getHomeGoods(this.currentType)
+
+        },
+
         /**
          * 网络请求的相关方法
          */
+
         // 获取首页轮播和导航的数据
         getHomeMultidata () {
             // 调用home.js中封装好的方法来发起请求，获取数据
@@ -138,6 +185,10 @@ export default {
                 this.goods[type].list.push(...res.data.list)
                 // 给每个类型的商品页数加1
                 this.goods[type].page += 1
+
+                // 实现可以重复上拉加载更多的功能
+                this.$refs.scroll.finishPullUp()
+
                 // console.log(this.goods['new']);
                 // console.log('=======================================');
                 // console.log(this.currentType);
@@ -151,7 +202,12 @@ export default {
 <style scoped>
 .home {
     /* 让整个页面距离顶部44px，这个刚好就可以放在顶部导航栏 */
-    padding-top: 44px;
+    /* padding-top: 44px; */
+    
+    /* 设置整个首页的高度为相对高度，用vh来做单位，表示相对视口的高度，不然的话home的实际高度就不是视口高度，而是会被首页中所有加载出来的内容的高度总和 */
+    height: 100vh;
+    /* 子绝父相 */
+    position: relative;
 }
 .home-nav {
     background-color: var(--color-tint);
@@ -168,15 +224,26 @@ export default {
 
 /* 让控制栏在页面到达某个位置时就固定 */
 .tab-control {
+    /* todo */
     position: sticky;
     /* 当页面滑动超过这个高度就会变成固定定位 */
+    top: 44px; 
+    z-index: 9;
+}
+
+/* 设置需要滚动的区域的高度 */
+.scroll-content {
+    /* 要设置动态的：首页需要滚动的区域只有中间，上方的导航栏固定了44px,下方的切换栏固定了49px，所以只有首页的视口高度减去这上下两个高度的中间部分需要滚动*/
+    /* height: calc(100% - 97px);
+    overflow: hidden;
+    margin-top: 51px; */
+
+    /* 另一种方法: 直接将中间设置为绝对定位，然后设置定位距离顶部和底部的距离即可 */
+    position: absolute;
+    overflow: hidden;
     top: 44px;
+    bottom: 49px;
+    left: 0;
+    right: 0;
 }
-
-.ulbox {
-    width: 100%;
-    height: 1000px;
-}
-
-
 </style>
