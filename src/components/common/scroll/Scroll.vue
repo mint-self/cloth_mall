@@ -89,6 +89,11 @@ export default {
             // 在自定义的方法中去调用滚动框架中自带的刷新方法
             // this.scroll && this.scroll.refresh 表示确认this.scroll或this.scroll.refresh的实例是否存在
             this.scroll && this.scroll.refresh && this.scroll.refresh()
+        },
+
+        // 获取首页浏览到某个位置的高度信息
+        getScrollY () {
+            return this.scroll ? this.scroll.y : 0
         }
     }
 }

@@ -5,11 +5,14 @@
             <!-- 在组件中通过向插槽中插入具体的内容，这里只向中间插入了东西，左右没有做距离的设置 -->
             <div slot="center">购物街</div>
         </nav-bar>
-        <!-- <tab-control 
-                class="tab-control" 
-                :titles="['流行', '新款', '精选']"
-                @tabClick="tabClick"
-            ></tab-control> -->
+        <tab-control 
+            class="tab-control" 
+            :titles="['流行', '新款', '精选']"
+            @tabClick="tabClick"
+            ref="tabControll1"
+            v-show="isTabControllFixed"
+            
+        />
         <!-- 以下组件都放在移动端滚动组件中 -->
         <!-- probe-type="3"传递给Scroll组件，当值为3表示要监听滚动的位置；pull-up-load="true" 表示要监听上拉事件
         -->
@@ -23,7 +26,7 @@
             @pullingUp="loadMore"
         >
             <!--首页上方轮播图, 数据是在home这个父组件中获取的，然后通过数据传递传送给子组件-->
-            <home-swiper :banners="banners"></home-swiper>
+            <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
 
             <!-- 首页上方推荐列表 -->
             <recommend-view :recommends="recommends"></recommend-view>
@@ -35,9 +38,9 @@
             <!-- 每个不同的页面，控制栏要显示的文字是不同的，所以直接由父元素将需要显示的文字传递过去 -->
             <!-- @tabClick="tabClick"绑定子组件tabControl传递过来的事件，可以接收到index -->
             <tab-control 
-                class="tab-control" 
                 :titles="['流行', '新款', '精选']"
                 @tabClick="tabClick"
+                ref="tabControll2"
             />
 
             <!-- 商品数据列表 -->
@@ -113,6 +116,22 @@ export default {
             refresh()
         })
     },
+    activated () {
+        // 在路由组件重新切换回来时触发这个钩子
+
+        // 在组件切换回来时，让首页停留在上次离开的位置
+        this.$refs.scroll.scrollTo(0, this.saveY, 0)
+        // 最好在回来时，能刷新一下避免better-scroll中有些bug
+        this.$refs.scroll.refresh()
+    },
+    deactivated () {
+        // 在路由组件切走时触发这个钩子
+        
+        // 当组件切走时，保存组件浏览到的一个位置信息saveY
+        this.saveY = this.$refs.scroll.getScrollY()
+        console.log(this.saveY);
+
+    },
     data () {
         return {
             // 广告轮播图的数据
@@ -133,6 +152,15 @@ export default {
 
             // 是否显示backTop
             isShowBackTop: false,
+
+            // tabControll的offsetTop
+            tabOffsetTop: 0,
+
+            // tabControll是否固定
+            isTabControllFixed: false,
+
+            // 组件在首页的位置信息
+            saveY: 0
         }
     },
     computed: { 
@@ -161,6 +189,10 @@ export default {
                     this.currentType = 'sell'
                     break;
             }
+            // 设置多出来的一个tabControll也要让index保持一致，才能实现切换自如
+            // tabControll组件中有一个currtentIndex属性，记录了当前哪个tab被选中的索引
+            this.$refs.tabControll1.currentIndex = index
+            this.$refs.tabControll2.currentIndex = index
         },
 
         // 实现点击backTop之后回到页面顶部
@@ -169,11 +201,16 @@ export default {
             this.$refs.scroll.scrollTo(0, 0)
         },
 
-        // 设置backTop的显示与隐藏
+        // 设置backTop的显示与隐藏; 以及设置tabControll的吸顶效果
         contentScroll (position) {
             // 当位置超过1000时显示，否则隐藏
             // 因为position.y的值是负数的，所以要先取它的相反数来计算
             this.isShowBackTop = (-position.y) > 1000
+
+            // 设置tabControll的吸顶
+            // 如果滚动到某个位置，tabControll就吸顶
+            // 但是这种方式对better-scroll框架没用，所以只能复制多一个tabControll组件，然后控制这2个组件的出现和消失的时机
+            this.isTabControllFixed = (-position.y) > this.tabOffsetTop
         },
 
         // 实现上拉加载更多
@@ -207,6 +244,17 @@ export default {
             }
         },
         */
+
+        // 监听首页轮播图加载完后计算tabControll的offsetTop
+        swiperImageLoad () {
+            // 获取tabControll组件的offsetTop值
+            /* 获取offsetTop后，当首页滚动到这里，就让tabControll位置固定
+                要获取组件中的某个属性，可以通过$el来获取
+                当有图片时，图片是异步加载的，所以如果没有图片加载后获取offsetTop得出来的高度是不包含图片的，这里图片加载最慢的一般是轮播图的，所以直接监听轮播图加载完后计算高度
+            */
+            // console.log(this.$refs.tabControll.$el.offsetTop);
+            this.tabOffsetTop = this.$refs.tabControll2.$el.offsetTop
+        },
 
         /**
          * 网络请求的相关方法
@@ -257,26 +305,37 @@ export default {
     /* 子绝父相 */
     position: relative;
 }
+
 .home-nav {
     background-color: var(--color-tint);
     /* 设置字体颜色 */
     color: #fff;
 
-    /* 设置导航栏是固定在页面上方的 */
-    position: fixed;
+    /* 设置导航栏是固定在页面上方的: 一开始设置这个是为了不让导航跟着原先浏览器的滚动而滚动，但现在因为下面的内容已经被better-scroll包裹了，所以上方的导航不用做特殊处理了*/
+    /* position: fixed;
     left: 0;
     right: 0;
     top: 0;
-    z-index: 1;
+    z-index: 1; */
 }
 
 /* 让控制栏在页面到达某个位置时就固定 */
 .tab-control {
-    /* todo */
-    position: sticky;
+    /* 这些没有效果 */
+    /* position: sticky; */
     /* 当页面滑动超过这个高度就会变成固定定位 */
-    top: 44px; 
+    /* top: 44px; 
+    z-index: 9; */
+    position: relative;
     z-index: 9;
+}
+
+/* 改用另一种方式: 动态设置样式 */
+.fixed {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 44px;
 }
 
 /* 设置需要滚动的区域的高度 */
@@ -287,8 +346,9 @@ export default {
     margin-top: 51px; */
 
     /* 另一种方法: 直接将中间设置为绝对定位，然后设置定位距离顶部和底部的距离即可 */
-    position: absolute;
     overflow: hidden;
+
+    position: absolute;
     top: 44px;
     bottom: 49px;
     left: 0;

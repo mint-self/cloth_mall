@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
     <!-- 使用底部导航栏组件 -->
     <main-tab-bar></main-tab-bar>
   </div>
