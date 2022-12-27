@@ -1,7 +1,7 @@
 <template>
     <div class="goods-list-item">
         <!-- 商品图片 -->
-        <img :src="goodsListItem.show.img" alt="">
+        <img :src="goodsListItem.show.img" alt="" @load="imageLoad">
         <!-- 商品的相关信息 -->
         <div class="goods-info">
             <!-- 商品信息描述 -->
@@ -24,6 +24,14 @@ export default {
             default () {
                 return {}
             }
+        }
+    },
+    methods: {
+        // 监听图片的加载，当图片加载完成之后，就要去调用Scroll组件中的refresh()方法，这样就可以解决better-scroll的高度bug问题
+        imageLoad () {
+            // console.log("image");
+            // 发送图片加载事件给home组件,然后让home组件去调用Scroll组件中的refresh()
+            this.$bus.$emit('itemImageLoad')
         }
     }
 }

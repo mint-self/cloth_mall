@@ -5,6 +5,9 @@ import router from './router'
 
 Vue.config.productionTip = false
 
+// 创建事件全局总线
+Vue.prototype.$bus = new Vue()
+
 new Vue({
   // 使用路由
   router,
