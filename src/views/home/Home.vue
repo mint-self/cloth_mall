@@ -11,7 +11,6 @@
             @tabClick="tabClick"
             ref="tabControll1"
             v-show="isTabControllFixed"
-            
         />
         <!-- 以下组件都放在移动端滚动组件中 -->
         <!-- probe-type="3"传递给Scroll组件，当值为3表示要监听滚动的位置；pull-up-load="true" 表示要监听上拉事件
