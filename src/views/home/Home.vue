@@ -16,37 +16,37 @@
         <!-- 以下组件都放在移动端滚动组件中 -->
         <!-- probe-type="3"传递给Scroll组件，当值为3表示要监听滚动的位置；pull-up-load="true" 表示要监听上拉事件
         -->
-        <scroll 
-            class="scroll-content" 
-            ref="scroll"
-            :probe-type="3"
-            :pull-up-load="true"
-            :click="true"
-            @scroll="contentScroll"
-            @pullingUp="loadMore"
-        >
-            <!--首页上方轮播图, 数据是在home这个父组件中获取的，然后通过数据传递传送给子组件-->
-            <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
+            <scroll 
+                class="scroll-content" 
+                ref="scroll"
+                :probe-type="3"
+                :pull-up-load="true"
+                :click="true"
+                @scroll="contentScroll"
+                @pullingUp="loadMore"
+            >
+                <!--首页上方轮播图, 数据是在home这个父组件中获取的，然后通过数据传递传送给子组件-->
+                <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
 
-            <!-- 首页上方推荐列表 -->
-            <recommend-view :recommends="recommends"></recommend-view>
+                <!-- 首页上方推荐列表 -->
+                <recommend-view :recommends="recommends"></recommend-view>
 
-            <!-- 首页本周推荐栏 -->
-            <feature-view></feature-view>
+                <!-- 首页本周推荐栏 -->
+                <feature-view></feature-view>
 
-            <!-- 首页的控制栏 -->
-            <!-- 每个不同的页面，控制栏要显示的文字是不同的，所以直接由父元素将需要显示的文字传递过去 -->
-            <!-- @tabClick="tabClick"绑定子组件tabControl传递过来的事件，可以接收到index -->
-            <tab-control 
-                :titles="['流行', '新款', '精选']"
-                @tabClick="tabClick"
-                ref="tabControll2"
-            />
+                <!-- 首页的控制栏 -->
+                <!-- 每个不同的页面，控制栏要显示的文字是不同的，所以直接由父元素将需要显示的文字传递过去 -->
+                <!-- @tabClick="tabClick"绑定子组件tabControl传递过来的事件，可以接收到index -->
+                <tab-control 
+                    :titles="['流行', '新款', '精选']"
+                    @tabClick="tabClick"
+                    ref="tabControll2"
+                />
 
-            <!-- 商品数据列表 -->
-            <!-- 将首页每个商品类型的数据传递过去 -->
-            <goods-list :goods="showGoods"></goods-list>
-        </scroll>
+                <!-- 商品数据列表 -->
+                <!-- 将首页每个商品类型的数据传递过去 -->
+                <goods-list :goods="showGoods"></goods-list>
+            </scroll>
 
         <!-- 回到顶部的按钮 -->
         <!-- 实现点击就回到页面的顶部，但是click事件不可以监听组件，需加上native表示实现原生属性才可以直接在组件上实现点击事件 -->
