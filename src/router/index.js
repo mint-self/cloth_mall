@@ -7,6 +7,7 @@ const Home = () => import('@/views/home/Home')
 const Category = () => import('@/views/category/Category')
 const Cart = () => import('@/views/cart/Cart')
 const Profile = () => import('@/views/profile/Profile')
+const Detail = () => import('@/views/detail/Detail')
 
 // 安装路由插件
 Vue.use(VueRouter)
@@ -37,6 +38,12 @@ const routes = [
     {
         path: '/profile',
         component: Profile
+    },
+    // 商品详情页
+    {
+        // 动态传递参数iid
+        path: '/detail/:iid',
+        component: Detail
     }
 ]
 

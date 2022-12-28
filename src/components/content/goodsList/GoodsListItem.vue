@@ -1,5 +1,5 @@
 <template>
-    <div class="goods-list-item">
+    <div class="goods-list-item" @click="itemClick">
         <!-- 商品图片 -->
         <img :src="goodsListItem.show.img" alt="" @load="imageLoad">
         <!-- 商品的相关信息 -->
@@ -32,6 +32,12 @@ export default {
             // console.log("image");
             // 发送图片加载事件给home组件,然后让home组件去调用Scroll组件中的refresh()
             this.$bus.$emit('itemImageLoad')
+        },
+
+        // 点击任意一个item项就会跳转到商品的详情页
+        itemClick () {
+            // 跳转的商品的详情页时，要将对应商品的iid携带过去，以便查询对应数据，iid就存放在每个item项中，从中获取即可
+            this.$router.push('/detail/' + this.goodsListItem.iid)
         }
     }
 }

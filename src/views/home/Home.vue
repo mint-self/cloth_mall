@@ -94,7 +94,6 @@ export default {
         this.getHomeGoods('new')
         this.getHomeGoods('sell')
 
-        
     },
     mounted () {
         // 应该将这个功能放在mounted中，因为想通过this.$refs，如果放在created()中组件还没挂载，不一定拿得到
