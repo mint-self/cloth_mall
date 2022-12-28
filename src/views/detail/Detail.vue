@@ -1,11 +1,13 @@
 <template>
-    <div>
+    <div class="detail">
         <!-- 顶部导航栏 -->
         <detail-nav-bar/>
         <!-- 顶部轮播图 -->
         <detail-swiper :topImages="topImages"/>
         <!-- 商品详细信息 -->
         <detail-goods-desc :goods="goods"/>
+        <!-- 商家信息 -->
+        <detail-shop-info :shop="shop"/>
     </div>
 </template>
 
@@ -13,15 +15,17 @@
 import DetailNavBar from './childComponents/DetailNavBar.vue';
 import DetailSwiper from './childComponents/DetailSwiper.vue';
 import DetailGoodsDesc from './childComponents/DetailGoodsDesc.vue';
+import DetailShopInfo from './childComponents/DetailShopInfo.vue';
 
-import { getDetail, Goods } from '@/network/detail';
+import { getDetail, Goods, Shop } from '@/network/detail';
 
 export default {
     name: 'Detail',
     components: {
         DetailNavBar,
         DetailSwiper,
-        DetailGoodsDesc
+        DetailGoodsDesc,
+        DetailShopInfo
     },
     data () {
         return {
@@ -33,6 +37,9 @@ export default {
 
             // 存储商品详细信息
             goods: {},
+
+            // 存储商家信息
+            shop: {}
 
         }
     },
@@ -49,10 +56,20 @@ export default {
             this.topImages = data.itemInfo.topImages
             // 2.2 获取商品详细信息：new一个实例对象，给对象传过去对应的参数
             this.goods = new Goods(data.itemInfo, data.columns, data.shopInfo.services)
+            // 2.3 获取商家信息
+            this.shop = new Shop(data.shopInfo)
         })
 
     },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.detail {
+    /* 详情页不需要有底部的导航栏，所以要设置将它们隐藏 */
+    position: relative;
+    z-index: 9;
+    /* 设置背景色，不让透明的还没法它们盖住 */
+    background-color: #fff;
+}
+</style>

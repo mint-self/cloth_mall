@@ -27,3 +27,16 @@ export class Goods {
         this.realPrice = itemInfo.lowNowPrice
     }
 }
+
+// 封装获取商家信息的数据
+export class Shop {
+    // 定义一个构造函数
+    constructor (shopInfo) {
+        this.logo = shopInfo.shopLogo
+        this.name = shopInfo.name
+        this.fans = shopInfo.cFans
+        this.sells = shopInfo.cSells
+        this.score = shopInfo.score
+        this.goodsCount = shopInfo.cGoods
+    }
+}
