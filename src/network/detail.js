@@ -40,3 +40,13 @@ export class Shop {
         this.goodsCount = shopInfo.cGoods
     }
 }
+
+// 封装获取商品参数信息的数据
+export class GoodsParams {
+    constructor (info, rule) {
+        // 不是每个商品都包含有这个，所以先判断下
+        this.image = info.images ? info.images[0] : ''
+        this.infos = info.set
+        this.sizes = rule.tables
+    }
+}

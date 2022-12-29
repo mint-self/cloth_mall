@@ -1,5 +1,6 @@
 <template>
-    <div class="goods-desc">
+    <!-- Vue是异步请求，页面渲染的时候，这里还不一定拿到数据了，如果还没拿到数据，那么就会是空的，直接显示就有可能报错，所以需要进行判断一下 -->
+    <div class="goods-desc" v-if="Object.keys(goods).length !== 0">
         <!-- 标题信息 -->
         <div class="goods-title">{{goods.title}}</div>
 
