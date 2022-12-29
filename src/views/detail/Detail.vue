@@ -15,6 +15,10 @@
             <detail-goods-info :detail-info="detailInfo" @imgLoad="imgLoad"/>
             <!-- 商品参数信息 -->
             <detail-goods-params :paramsInfo="paramsInfo"/>
+            <!-- 商品评论信息 -->
+            <detail-comment-info :comment-info="commentInfo"/>
+            <!-- 商品推荐列表 -->
+            <goods-list :goods="recommends"/>
         </scroll>
         
     </div>
@@ -22,6 +26,7 @@
 
 <script>
 import Scroll from '@/components/common/scroll/Scroll'
+import GoodsList from '@/components/content/goodsList/GoodsList.vue';
 
 import DetailNavBar from './childComponents/DetailNavBar.vue';
 import DetailSwiper from './childComponents/DetailSwiper.vue';
@@ -29,20 +34,28 @@ import DetailGoodsDesc from './childComponents/DetailGoodsDesc.vue';
 import DetailShopInfo from './childComponents/DetailShopInfo.vue';
 import DetailGoodsInfo from './childComponents/DetailGoodsInfo.vue';
 import DetailGoodsParams from './childComponents/DetailGoodsParams.vue';
+import DetailCommentInfo from './childComponents/DetailCommentInfo.vue';
 
-import { getDetail, Goods, Shop, GoodsParams } from '@/network/detail';
+
+import { getDetail, getRecommend, Goods, Shop, GoodsParams } from '@/network/detail';
+import { debounce } from 'common/utils'
+import { itemListenerMixin } from 'common/mixin'
 
 export default {
     name: 'Detail',
     components: {
         Scroll,
+        GoodsList,
         DetailNavBar,
         DetailSwiper,
         DetailGoodsDesc,
         DetailShopInfo,
         DetailGoodsInfo,
         DetailGoodsParams,
+        DetailCommentInfo
     },
+    // 设置混入，取代重复代码
+    mixins: [itemListenerMixin],
     data () {
         return {
             // 存放商品唯一标识的iid
@@ -63,6 +76,11 @@ export default {
             // 存储商品参数信息
             paramsInfo: {},
 
+            // 存储商品评价信息
+            commentInfo: {},
+
+            // 存储推荐商品的数据
+            recommends: []
         }
     },
     created () {
@@ -86,9 +104,33 @@ export default {
             this.paramsInfo = new GoodsParams(data.itemParams
 .info, data.itemParams
 .rule)
-
+            // 2.6 获取商品评论信息
+            if (data.rate.cRate !== 0) {
+                this.commentInfo = data.rate.list[0]
+            }
         })
 
+        // 3 获取详情页推荐列表的数据
+        getRecommend().then( res => {
+            console.log(res);
+            this.recommends = res.data.list
+        })
+
+    },
+    mounted () {
+        /* 设置了混入，取消了这些重复代码
+        // 设置防抖的刷新函数
+        let refresh = debounce(this.$refs.scroll.refresh, 100)
+        // 监听图片的加载，图片加载并刷新
+        this.$bus.$on('itemImageLoad', () => {
+            refresh()
+        })
+        */
+    },
+    destroyed () {
+        // 离开组件时取消图片监听
+        this.$bus.$off('itemImageLoad', this.itemImgListener)
+        
     },
     methods: {
         // 监听商品信息中图片的加载

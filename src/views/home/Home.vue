@@ -71,7 +71,8 @@ import FeatureView from './childComponents/FeatureView'
 
 // 导入网络请求的相关组件
 import { getHomeMultidata, getHomeGoods } from 'network/home'
-import {debounce} from '@/common/utils'
+import { debounce } from '@/common/utils'
+import { itemListenerMixin } from 'common/mixin'
 
 export default {
     name: 'Home',
@@ -85,6 +86,7 @@ export default {
         RecommendView,
         FeatureView
     },
+    mixins: [itemListenerMixin],
     created () {
         // 页面创建时，立马调用方法获取数据
         this.getHomeMultidata()
@@ -107,12 +109,15 @@ export default {
         // 改用防抖函数，不让refresh加载那么频繁
         // 将refresh设置防抖
         // const refresh = this.debounce(this.$refs.scroll.refresh, 200)
+
+        /* 设置了混入，取消了这些重复代码
         const refresh = debounce(this.$refs.scroll.refresh, 200)
         this.$bus.$on('itemImageLoad', () => {
             // 调用了设置了防抖的refresh
             console.log('=========');
             refresh()
         })
+        */
     },
     activated () {
         // 在路由组件重新切换回来时触发这个钩子
@@ -129,6 +134,14 @@ export default {
         this.saveY = this.$refs.scroll.getScrollY()
         console.log(this.saveY);
 
+        // 2 第二种方式，就是在切走home组件的时候，就取消对itemImageLoad的监听 this.$bus.$off('方法名', 回调函数)
+
+        // 对监听事件进行保存
+        this.itemImgListener = () => {
+            // 调用设置了防抖的刷新函数
+            refresh()
+        }
+        this.$bus.$off('itemImageLoad', this.itemImgListener)
     },
     data () {
         return {
