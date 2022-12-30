@@ -40,6 +40,8 @@ export default {
         // 点击每项item时，将点击的item的index赋值为当前的index
         titleClick (index) {
             this.currentIndex = index
+            // 将点击事件传递给Detail
+            this.$emit('titleClick', index)
         },
 
         // 点击之后返回到首页

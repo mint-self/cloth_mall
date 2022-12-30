@@ -26,7 +26,7 @@
                 alt="" 
                 v-for="(item, index) in detailInfo.detailImage[0].list"
                 :key="index"
-                @load="loadImg"
+                @load="imgLoad"
             >
         </div>
     </div>
@@ -55,21 +55,25 @@ export default {
     },
     methods: {
         // 监听图片的加载
-        loadImg () {
+        imgLoad () {
             // 因为有多张图片，直接等到最后一张图片加载完成后再发送事件。
             // 计算图片的张数方法：定义一个计数器counter,每加载一张图片counter就加1，当counter的次数和存放图片的数组中的图片张数相等时，就是图片都加载完成了
             
             // 加载一次就加1
-            this.counter += 1
+            ++this.counter 
             if (this.counter === this.imageLength) {
                 // 表示图片加载完成了
                 this.$emit('imgLoad')
+                console.log('goodsinfoimg');
             }
+            // console.log('counter' + this.counter);
+            // console.log(this.imageLength);
         }
     },
     watch: {
         // 监听图片的张数
-        imageCount () {
+        // 注意：这里的watch是要监听的是detailInfo中的数据，所以必须detailInfo(){} 而不能自己随便起个方法名，这里不是方法名，而是要监听的数据
+        detailInfo () {
             // 计算出图片的张数
             this.imageLength = this.detailInfo.detailImage[0].list.length
         }

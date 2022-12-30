@@ -265,6 +265,7 @@ export default {
             */
             // console.log(this.$refs.tabControll.$el.offsetTop);
             this.tabOffsetTop = this.$refs.tabControll2.$el.offsetTop
+            console.log('swiperimg');
         },
 
         /**
