@@ -72,7 +72,7 @@ import FeatureView from './childComponents/FeatureView'
 // 导入网络请求的相关组件
 import { getHomeMultidata, getHomeGoods } from 'network/home'
 import { debounce } from '@/common/utils'
-import { itemListenerMixin } from 'common/mixin'
+import { itemListenerMixin, backTopMixin } from 'common/mixin'
 
 export default {
     name: 'Home',
@@ -81,12 +81,14 @@ export default {
         TabControl,
         GoodsList,
         Scroll,
-        BackTop,
         HomeSwiper,
         RecommendView,
-        FeatureView
+        FeatureView,
+        /* 混入
+        BackTop,
+        */
     },
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, backTopMixin],
     created () {
         // 页面创建时，立马调用方法获取数据
         this.getHomeMultidata()
@@ -161,8 +163,8 @@ export default {
             // 当前选中的商品类型
             currentType: 'pop',
 
-            // 是否显示backTop
-            isShowBackTop: false,
+            // 是否显示backTop 混入
+            // isShowBackTop: false,
 
             // tabControll的offsetTop
             tabOffsetTop: 0,
@@ -206,11 +208,13 @@ export default {
             this.$refs.tabControll2.currentIndex = index
         },
 
+        /* 混入
         // 实现点击backTop之后回到页面顶部
         backTopClick () {
             // 直接调用Scroll组件中定义好的回调顶部的方法scrollTo()
             this.$refs.scroll.scrollTo(0, 0)
         },
+        */
 
         // 设置backTop的显示与隐藏; 以及设置tabControll的吸顶效果
         contentScroll (position) {

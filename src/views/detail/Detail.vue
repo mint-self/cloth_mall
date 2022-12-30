@@ -29,6 +29,11 @@
 
         <!-- 底部工具栏 -->
         <detail-bottom-bar />
+        <!-- 回到顶部的BackTop -->
+        <back-top 
+            @click.native="backTopClick"
+            v-show="isShowBackTop"
+        />
     </div>
 </template>
 
@@ -48,7 +53,7 @@ import DetailBottomBar from './childComponents/DetailBottomBar.vue';
 
 import { getDetail, getRecommend, Goods, Shop, GoodsParams } from '@/network/detail';
 import { debounce } from 'common/utils'
-import { itemListenerMixin } from 'common/mixin'
+import { itemListenerMixin, backTopMixin } from 'common/mixin'
 
 export default {
     name: 'Detail',
@@ -65,7 +70,7 @@ export default {
         DetailBottomBar
     },
     // 设置混入，取代重复代码
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin, backTopMixin],
     data () {
         return {
             // 存放商品唯一标识的iid
@@ -285,6 +290,10 @@ export default {
                 }
             }
         
+            // 当位置超过1000时显示，否则隐藏
+            // 因为position.y的值是负数的，所以要先取它的相反数来计算
+            this.isShowBackTop = (-position.y) > 1000
+            // console.log(this.isShowBackTop); 
         }
     }
 }
