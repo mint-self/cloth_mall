@@ -26,7 +26,9 @@
             <!-- 商品推荐列表 -->
             <goods-list :goods="recommends" ref="recommends"/>
         </scroll>
-        
+
+        <!-- 底部工具栏 -->
+        <detail-bottom-bar />
     </div>
 </template>
 
@@ -41,6 +43,7 @@ import DetailShopInfo from './childComponents/DetailShopInfo.vue';
 import DetailGoodsInfo from './childComponents/DetailGoodsInfo.vue';
 import DetailGoodsParams from './childComponents/DetailGoodsParams.vue';
 import DetailCommentInfo from './childComponents/DetailCommentInfo.vue';
+import DetailBottomBar from './childComponents/DetailBottomBar.vue';
 
 
 import { getDetail, getRecommend, Goods, Shop, GoodsParams } from '@/network/detail';
@@ -58,7 +61,8 @@ export default {
         DetailShopInfo,
         DetailGoodsInfo,
         DetailGoodsParams,
-        DetailCommentInfo
+        DetailCommentInfo,
+        DetailBottomBar
     },
     // 设置混入，取代重复代码
     mixins: [itemListenerMixin],
@@ -297,10 +301,9 @@ export default {
     height: 100vh;
 }
 
-/* 要滚动起来，要先设置好滚动区域的固定高度 */
+/* 要滚动起来，要先设置好滚动区域的固定高度:减去顶部和底部的工具栏，只剩中间区域滚动 */
 .scroll-content {
-    height: calc(100% - 44px);
+    height: calc(100% - 44px - 49px);
     overflow: hidden;
 }
-
 </style>
