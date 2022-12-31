@@ -24,7 +24,7 @@
         <!-- 右边 -->
         <div class="bottom-right">
             <!-- 加入购物车 -->
-            <div class="cart">加入购物车</div>
+            <div class="cart" @click="addCart">加入购物车</div>
 
             <!-- 购买 -->
             <div class="buy">购买</div>
@@ -34,7 +34,13 @@
 
 <script>
 export default {
-    name: 'DetailBottomBar'
+    name: 'DetailBottomBar',
+    methods: {
+        addCart () {
+            // 具体的实现逻辑在detail中实现，因为具体的商品在那里才可以拿
+            this.$emit('addCart')
+        }
+    }
 }
 </script>
 

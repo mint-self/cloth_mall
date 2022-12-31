@@ -28,7 +28,7 @@
         </scroll>
 
         <!-- 底部工具栏 -->
-        <detail-bottom-bar />
+        <detail-bottom-bar @addCart="addToCart"/>
         <!-- 回到顶部的BackTop -->
         <back-top 
             @click.native="backTopClick"
@@ -294,6 +294,25 @@ export default {
             // 因为position.y的值是负数的，所以要先取它的相反数来计算
             this.isShowBackTop = (-position.y) > 1000
             // console.log(this.isShowBackTop); 
+        },
+
+        // 将商品添加到购物车
+        addToCart () {
+            // 1 获取要添加到购物的商品信息
+            const product = {}
+            product.image = this.topImages[0]
+            product.title = this.goods.title
+            product.desc = this.goods.desc
+            product.price = this.goods.realPrice
+            product.iid = this.iid
+
+            // 2 将商品添加到购物车中：这里是先将商品对象添加到Vuex的state中作数据管理
+            // 直接修改：一般不会直接去修改state中的数据，而是通过commit等去提起修改
+            // this.$store.cartList.push(product)
+            // 通过commit方式：
+            // this.$store.commit('addCart', product)
+            // 通过dispatch方式：
+            this.$store.dispatch('addCart', product)
         }
     }
 }
