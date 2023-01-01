@@ -11,6 +11,9 @@
 
         <!-- 购物车商品列表 -->
         <cart-list></cart-list>
+
+        <!-- 底部工具栏 -->
+        <cart-bottom-bar></cart-bottom-bar>
     </div>
 </template>
 
@@ -18,6 +21,7 @@
 import NavBar from '@/components/common/navbar/NavBar.vue';
 
 import CartList from './childComponents/CartList.vue';
+import CartBottomBar from './childComponents/CartBottomBar.vue';
 
 // 导入vuex中的getters, 并且使用vuex的解构赋值
 import { mapGetters } from 'vuex';
@@ -26,7 +30,8 @@ export default {
     name: 'Cart',
     components: {
         NavBar,
-        CartList
+        CartList,
+        CartBottomBar
     },
     computed: {
         /*

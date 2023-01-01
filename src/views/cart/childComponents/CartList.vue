@@ -34,7 +34,7 @@ export default {
 
 /* 这个滚动是直接设置在滚动内容的,所以父容器的高度设置和之前的不太一样 */
 .cart-list {
-    height: calc(100vh - 44px);
+    height: calc(100vh - 44px - 49px - 42px);
 }
 .content {
     height: 100%;
