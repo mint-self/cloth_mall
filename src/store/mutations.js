@@ -24,6 +24,8 @@ export default {
 
     // 将商品添加到购物车
     [ADD_TO_CART](state, payload) {
+        // 商品加入购物车时,设置商品的选中状态,默认加入购物车,状态为选中
+        payload.checked = true
         state.cartList.push(payload)
     }
 
