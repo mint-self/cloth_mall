@@ -1,5 +1,5 @@
 <template>
-    <div class="nav-bar">
+    <div class="nav-bar ignore">
         <!-- 封装顶部导航栏组件：顶部导航栏一般是分3个部分的，左中右，每个部分分别可以插入不同的东西，所以就可以在一个大的盒子中去插入三个插槽，从而可以实现像这三个插槽分别插入不同的东西-->
         <div class="left">
             <slot name="left"></slot>

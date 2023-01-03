@@ -1,7 +1,9 @@
 <template>
     <div class="goods-list-item" @click="itemClick">
         <!-- 商品图片 -->
-        <img :src="showImage" alt="" @load="imageLoad">
+        <!-- <img :src="showImage" alt="" @load="imageLoad"> -->
+        <!-- 使用图片懒加载 -->
+        <img v-lazy="showImage" alt="" @load="imageLoad">
         <!-- 商品的相关信息 -->
         <div class="goods-info">
             <!-- 商品信息描述 -->
