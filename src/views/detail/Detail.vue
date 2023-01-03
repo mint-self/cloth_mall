@@ -54,6 +54,7 @@ import DetailBottomBar from './childComponents/DetailBottomBar.vue';
 import { getDetail, getRecommend, Goods, Shop, GoodsParams } from '@/network/detail';
 import { debounce } from 'common/utils'
 import { itemListenerMixin, backTopMixin } from 'common/mixin'
+import { mapActions } from 'vuex';
 
 export default {
     name: 'Detail',
@@ -228,6 +229,9 @@ export default {
         
     },
     methods: {
+        // vuex中的actions方法映射
+        ...mapActions(['addCart']),
+
         // 监听商品信息中图片的加载
         imgLoad () {
             // 图片加载完成，就调用Scroll中的刷新一下,重新计算高度
@@ -307,12 +311,19 @@ export default {
             product.iid = this.iid
 
             // 2 将商品添加到购物车中：这里是先将商品对象添加到Vuex的state中作数据管理
-            // 直接修改：一般不会直接去修改state中的数据，而是通过commit等去提起修改
-            // this.$store.cartList.push(product)
+            // 2.1 直接修改：一般不会直接去修改state中的数据，而是通过commit等去提起修改
+            // 2.2 this.$store.cartList.push(product)
             // 通过commit方式：
             // this.$store.commit('addCart', product)
-            // 通过dispatch方式：
-            this.$store.dispatch('addCart', product)
+            // 2.3 通过dispatch方式：
+            // this.$store.dispatch('addCart', product)
+            // 2.4 将actions中的方法通过mapAction 映射到methods中,里面封装了Promise对象,所以可以直接.then()来获取结果
+            this.addCart(product).then(res => {
+                // console.log(res);
+                // 调用toast插件中的弹窗方法
+                this.$toast.show(res, 1000)
+            })
+
         }
     }
 }

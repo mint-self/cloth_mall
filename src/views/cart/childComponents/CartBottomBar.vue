@@ -2,7 +2,11 @@
     <div class="bottom-bar">
         <!-- 全选按钮 -->
         <div class="bottom-check">
-            <check-button class="check-button"></check-button>
+            <check-button 
+                class="check-button" 
+                @click.native="checkAll"
+                :is-check="isSelectAll"
+            ></check-button>
             <span>全选</span>
         </div>
 
@@ -12,7 +16,7 @@
         </div>
 
         <!-- 计算按钮 -->
-        <div class="bottom-calc">
+        <div class="bottom-calc" @click="calcClick">
             去计算：({{ totalCount }})
         </div>
     </div>
@@ -48,6 +52,55 @@ export default {
             }).length
         },
 
+        // 设置全选按钮默认的选中状态
+        // 如果购物车中一件商品都没有，默认不选中；如果购物车中有一个没选中的，全选按钮就不能为勾选状态
+        isSelectAll () {
+            if (this.cartList.length === 0) {
+                // 购物车为空，全选按钮不勾选
+                return false
+            }
+            // 否则如果购物车有商品，那么我们都是默认加入购物车中的商品都是勾选的，也就是购物车有商品就默认设置为全选true
+            // !item.checked: 表示有没勾选的，
+            // this.cartList.filter(item => !item.checked).length 表示没勾选的有长度，也就是有未勾选的
+            // 那么对未勾选的取反,就是为true, 而我们就是要设置全选按钮的默认状态为true
+
+            // 方法1: 使用filter过滤
+            return !(this.cartList.filter(item => !item.checked).length)
+
+            // 方法2: 使用find查找, 只要找到有一个false,那么就是false,取反就是true了
+            // return !(this.cartList.find(item => !item.checked))
+
+            // 方法3: 使用普通for遍历数组,只要有false就返回false,否则返回true
+            // for (let item of this.cartList) {
+            //     if(!item.checked) {
+            //         // 有未勾选的
+            //         return false
+            //     }
+            // }
+            // return true
+
+        }
+
+    },
+    methods: {
+        // 实现全选按钮的功能
+        checkAll () {
+            if (this.isSelectAll) {
+                // 如果是全选的就设置为全不选,遍历数组中的元素,将选中状态设置为false即可
+                this.cartList.forEach(item => item.checked = false) 
+            } else {
+                // 如果为全不选或者有部分选中而已,则点击全选之后为全选中
+                this.cartList.forEach(item => item.checked = true)
+            }
+        },
+
+        // 当购物车没商品时，点击去计算弹出提示框
+        calcClick () {
+            if (!this.isSelectAll) {
+                // 如果全选按钮为false，也就是购物车中无商品
+                this.$toast.show('请选择购买的商品', 1000)
+            }
+        }
     }
 }
 </script>
@@ -74,6 +127,10 @@ export default {
 } 
 .check-button {
     margin-right: 5px;
+    /* 设置check-button里面设置内嵌的图片 */
+    width: 20px;
+    height: 20px;
+    line-height: 18px;
 }
 .bottom-count {
     margin-left: 30px;

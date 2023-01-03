@@ -5,6 +5,12 @@ import router from './router'
 // 导入vuex的store
 import store from './store'
 
+// 导入toast插件
+import toast from 'components/common/toast'
+
+// 安装插件
+Vue.use(toast)
+
 Vue.config.productionTip = false
 
 // 创建事件全局总线
